@@ -8,8 +8,9 @@ import socket
 import subprocess
 
 BASE_DIR = os.getcwd()
-UDS_PATH = BASE_DIR + "/Zero_Context_mouse.sock"
-VELOCITY_CEILING = 5000   #px/s
+UDS_MOUSE = BASE_DIR + "/Zero_Context_mouse.sock"
+UDS_KBD = BASE_DIR + "/Zero_Context_kbd.sock"
+VELOCITY_CEILING = 15000   #px/s
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SENSOR_BIN = os.path.join(BASE_DIR, "sensor_daemon")
@@ -18,10 +19,11 @@ SENSOR_SRC = os.path.join(BASE_DIR, "sensor_daemon.cpp")
 class ZeroContextEngine :
     def __init__ (self) :
         self.prev_x, self.prev_y, self.prev_t = 0, 0, 0.0
+        self.key_press_timers = {}
 
-    async def handle_client(self, reader, writer):
+    async def handle_mouse(self, reader, writer):
         # Force Carriage Return (\r) on all print statements to fix terminal alignment
-        print("[*] C++ Sensor Daemon Connected via UDS.\r")
+        print("[*] Mouse IPC Channel Established")
         try:
             while True:
                 # Use readline() to guarantee we process exactly one complete JSON packet at a time
@@ -60,12 +62,46 @@ class ZeroContextEngine :
             print("\n[*] Sensor Disconnected.")
             writer.close()
 
+    async def handle_keyboard (self, reader, writer) :
+        print("[*] Keyboard IPC Channel Established.")
+        try :
+            while True :
+                data = await reader.readline()
+                if not data :
+                    break
+
+                try :
+                    payload = json.loads(data.decode().strip())
+                except json.JSONDecodeError :
+                        continue
+
+                key_code = payload['key_code']
+                state = payload['state']
+                timestamp = payload['timestamp']
+
+                print(f"\r[*] RAW KBD STREAM - KeyCode: {key_code} | State: {state}")
+
+                if state == 1 :
+                    self.key_press_timers[key_code] = timestamp
+
+                elif state == 0 and key_code in self.key_press_timers :
+                    dwell_time = timestamp - self.key_press_timers [key_code]
+                    print (f"\r[Keyboard] KeyCode: {key_code :> 3} | Dwell Time: {dwell_time :.4f} seconds")
+
+                    del self.key_press_timers[key_code]
+
+                    if dwell_time < 0.01 :
+                        print ("\r[!] SECURITY ALERT: Non-human Dwell Time detected. Possible Script injection.")
+
+        except asyncio.CancelledError :
+                    pass
+
 async def main():
     # 1. Auto-Compile the C++ daemon if needed (Blocking is fine here)
     if not os.path.exists(SENSOR_BIN):
-        print("[*] C++ Sensor Daemon binary not found. Compiling now...")
+        print("[*] Compiling Multi-Threaded C++ Daemon...")
         try:
-            subprocess.run(["g++", SENSOR_SRC, "-o", SENSOR_BIN], check=True)
+            subprocess.run(["g++", "-pthread", SENSOR_SRC, "-o", SENSOR_BIN], check=True)
             print("[*] Compilation successful.")
         except subprocess.CalledProcessError:
             print("[!] FATAL: Compilation failed.")
@@ -77,17 +113,19 @@ async def main():
     sensor_process = subprocess.Popen(["sudo", SENSOR_BIN])
 
     # 3. Start the Python UDS Server
-    if os.path.exists(UDS_PATH):
-        os.remove(UDS_PATH)
+    for sock in [UDS_MOUSE, UDS_KBD] :
+            if os.path.exists(sock):
+                os.remove(sock)
         
     engine = ZeroContextEngine()
-    server = await asyncio.start_unix_server(engine.handle_client, path = UDS_PATH)
+    mouse_server = await asyncio.start_unix_server(engine.handle_mouse, path = UDS_MOUSE)
+    kbd_server = await asyncio.start_unix_server(engine.handle_keyboard, path = UDS_KBD)
     
-    print(f"[*] ZeroContext Backend listening on {UDS_PATH}")
+    print(f"[*] ZeroContext Backend listening on {UDS_MOUSE}")
     
     try:
-        async with server:
-            await server.serve_forever()
+        async with mouse_server, kbd_server:
+            await asyncio.gather(mouse_server.serve_forever(), kbd_server.serve_forever())
     finally:
         # 4. Clean up the C++ process if the Python server shuts down
         print("\n[*] Shutting down C++ Sensor Daemon...")
