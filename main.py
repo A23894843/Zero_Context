@@ -1,29 +1,49 @@
 import os
-import sys
-import json
-import math
-import time
 import asyncio
-import socket
+import platform
 import subprocess
 import config
 from engine.core import ZeroContextEngine
 
 async def main():
+    os_type = platform.system()
     # 1. Auto-Compile the C++ daemon if needed (Blocking is fine here)
-    if not os.path.exists(config.SENSOR_BIN):
-        print("[*] Compiling Multi-Threaded C++ Daemon...")
-        try:
-            subprocess.run(["g++", "-pthread", config.SENSOR_SRC, "-o", config.SENSOR_BIN], check=True)
-            print("[*] Compilation successful.")
-        except subprocess.CalledProcessError:
-            print("[!] FATAL: Compilation failed.")
-            exit(1)
+    if os_type == "Linux"   :
+        print ("Running on Linux")
+        if not os.path.exists(config.SENSOR_BIN):
+            print("[*] Compiling Multi-Threaded C++ Daemon...")
+            try:
+                subprocess.run(["g++", "-pthread", config.SENSOR_SRC, "-o", config.SENSOR_BIN], check=True)
+                print("[*] Compilation successful.")
+            except subprocess.CalledProcessError:
+                print("[!] FATAL: Compilation failed.")
+                exit(1)
+    elif os_type == "Windows"   :
+        print ("Running on Windows")
+        if not os.path.exists(config.SENSOR_BIN):
+            print("[*] Compiling Multi-Threaded C++ Daemon...")
+            try:
+                subprocess.run(
+                ["g++", "-pthread", config.SENSOR_SRC_WIN, "-o", config.SENSOR_BIN + ".exe"],
+                check=True
+                )
+                print("[*] Compilation successful.")
+            except subprocess.CalledProcessError:
+                print("[!] FATAL: Compilation failed.")
+                exit(1)
+
+    else    :
+        pass
 
     # 2. Launch the C++ daemon in the background (Non-Blocking)
     print("[*] Launching C++ Sensor Daemon with root privileges...")
     print("[*] Note: You may be prompted for your sudo password.")
-    sensor_process = subprocess.Popen(["sudo", config.SENSOR_BIN])
+    if os_type == "Linux" :
+        sensor_process = subprocess.Popen(["sudo", config.SENSOR_BIN])
+    elif os_type == "Windows"   :
+        sensor_process = subprocess.Popen(["./sensor"])
+    else    :
+        pass
 
     # 3. Start the Python UDS Server
     for sock in [config.UDS_MOUSE, config.UDS_KBD] :

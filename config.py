@@ -13,8 +13,9 @@ UDS_KBD = os.path.join(BASE_DIR, "Zero_Context_kbd.sock")
 VELOCITY_CEILING = 15000   #px/s
 
 # C++ Daemon Paths
-SENSOR_BIN = os.path.join(SENSOR_DIR, "sensor_daemon")
+SENSOR_BIN = os.path.join(SENSOR_DIR, "sensor")
 SENSOR_SRC = os.path.join(SENSOR_DIR, "sensor_daemon.cpp")
+SENSOR_SRC_WIN = os.path.join(SENSOR_DIR, "sensor.cpp")
 
 # Persistance  Logging
 TELEMETRY_LOG = os.path.join(BASE_DIR, "zero_context_telemetry.jsonl")
