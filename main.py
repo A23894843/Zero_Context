@@ -1,56 +1,48 @@
 import os
+import sys
+import glob
 import asyncio
-import platform
 import subprocess
 import config
+from engine.train_pipeline import train_models
 from engine.core import ZeroContextEngine
+from engine.database import AsyncThreatDB
+
+def get_kali_keyboard_path()    :
+    """Resolves the dynamic keyboard event path native to kali Linux udev rules."""
+    for path in glob.glob("/dev/input/by-path/*-kbd"):
+        return path
+
+    print ("[!] WARNING: Colud not auto-deect keyboard in /by-path/. Defaulting to event0.")
+    return "/dev/input/event0"
 
 async def main():
-    os_type = platform.system()
     # 1. Auto-Compile the C++ daemon if needed (Blocking is fine here)
-    if os_type == "Linux"   :
-        print ("Running on Linux")
-        if not os.path.exists(config.SENSOR_BIN):
-            print("[*] Compiling Multi-Threaded C++ Daemon...")
-            try:
-                subprocess.run(["g++", "-pthread", config.SENSOR_SRC, "-o", config.SENSOR_BIN], check=True)
-                print("[*] Compilation successful.")
-            except subprocess.CalledProcessError:
-                print("[!] FATAL: Compilation failed.")
-                exit(1)
-    elif os_type == "Windows"   :
-        print ("Running on Windows")
-        if not os.path.exists(config.SENSOR_BIN):
-            print("[*] Compiling Multi-Threaded C++ Daemon...")
-            try:
-                subprocess.run(
-                ["g++", "-pthread", config.SENSOR_SRC_WIN, "-o", config.SENSOR_BIN + ".exe"],
-                check=True
-                )
-                print("[*] Compilation successful.")
-            except subprocess.CalledProcessError:
-                print("[!] FATAL: Compilation failed.")
-                exit(1)
+    if not os.path.exists(config.SENSOR_BIN):
+        print("[*] Compiling Multi-Threaded C++ Daemon...")
+        try:
+            subprocess.run(["g++", "-pthread", config.SENSOR_SRC, "-o", config.SENSOR_BIN], check=True)
+            print("[*] Compilation successful.")
+        except subprocess.CalledProcessError:
+            print("[!] FATAL: Compilation failed.")
+            exit(1)
 
-    else    :
-        pass
+    active_kbd_path = get_kali_keyboard_path()
 
     # 2. Launch the C++ daemon in the background (Non-Blocking)
     print("[*] Launching C++ Sensor Daemon with root privileges...")
     print("[*] Note: You may be prompted for your sudo password.")
-    if os_type == "Linux" :
-        sensor_process = subprocess.Popen(["sudo", config.SENSOR_BIN])
-    elif os_type == "Windows"   :
-        sensor_process = subprocess.Popen(["./sensor"])
-    else    :
-        pass
+    sensor_process = subprocess.Popen(["sudo", config.SENSOR_BIN, active_kbd_path])
 
     # 3. Start the Python UDS Server
     for sock in [config.UDS_MOUSE, config.UDS_KBD] :
-            if os.path.exists(sock):
-                os.remove(sock)
+        if os.path.exists(sock):
+            os.remove(sock)
+
+    db = AsyncThreatDB (host = config.DB_HOST, user = config.DB_USER, password = config.DB_PASS, db = config.DB_NAME)
+    await db.connect()
         
-    engine = ZeroContextEngine(config)
+    engine = ZeroContextEngine(config, db)
     mouse_server = await asyncio.start_unix_server(engine.handle_mouse, path = config.UDS_MOUSE)
     kbd_server = await asyncio.start_unix_server(engine.handle_keyboard, path = config.UDS_KBD)
     
@@ -63,10 +55,13 @@ async def main():
         # 4. Clean up the C++ process if the Python server shuts down
         print("\n[*] Shutting down C++ Sensor Daemon...")
         sensor_process.terminate()
+        await db.close()
 
 if __name__ == "__main__" :
     try:
-        os.remove(os.path.join(config.BASE_DIR, "zero_context_telemetry.jsonl"))
+        os.remove(os.path.join(config.TEMP_DIR, "zero_context_telemetry.jsonl"))
+        print ("Old telemetry ledger cleared.")
+        os.makedirs (config.MODEL_DIR, exist_ok = True)
     except FileNotFoundError:
         pass
     except OSError as e:
@@ -74,5 +69,8 @@ if __name__ == "__main__" :
 
     try :
         asyncio.run(main())
+        train_models()
     except KeyboardInterrupt :
         print("\n[*] ZeroContext System Halted.")
+
+        print ("\n[*] ZeroContext Lifecycle Complete.")
