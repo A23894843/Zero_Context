@@ -24,5 +24,5 @@ TELEMETRY_LOG = os.path.join(TEMP_DIR, "zero_context_telemetry.jsonl")
 # Database Configuration
 DB_HOST = "0.0.0.0"
 DB_USER = "root"
-DB_PASS = "hp122023" # Update this if your root user has a password
+DB_PASS = "" # Update this if your root user has a password
 DB_NAME = "ZeroContext"
