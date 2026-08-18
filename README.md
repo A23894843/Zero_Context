@@ -1,338 +1,401 @@
-# Zero_Context
+# ⚡ Zero Context
 
-## Overview
+<p align="center">
+  <img src="https://img.shields.io/badge/Architecture-Hybrid-00D9FF?style=for-the-badge" alt="Architecture"/>
+  <img src="https://img.shields.io/badge/C%2B%2B-Sensor-00599C?style=for-the-badge&logo=cplusplus&logoColor=white" alt="C++"/>
+  <img src="https://img.shields.io/badge/Python-Intelligence-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/Machine%20Learning-Enabled-FF6F00?style=for-the-badge" alt="Machine Learning"/>
+</p>
 
-**Zero_Context** is an advanced, hybrid **Intrusion Detection and Prevention System (IDPS)** designed to monitor system logs and live network traffic, detect anomalous behavior, and support real-time defensive actions.
+<p align="center">
+  <strong>Low-Level Sensing • Intelligent Processing • Real-Time Monitoring</strong>
+</p>
 
-The **Cyber Defensive Engine v1.0** combines:
-
-* High-performance **C++ network packet capture**
-* **Python-based security intelligence**
-* Unsupervised **machine learning**
-* Real-time system log monitoring
-* Persistent **MySQL threat logging**
-* Inter-process communication between the C++ sensor and Python engine
-* A web-based **real-time security dashboard**
-
-The architecture is designed to detect suspicious activities such as **DDoS behavior, port scanning, abnormal network traffic, and malicious log activity**.
-
----
-
-## System Architecture
-
-The system is divided into two primary operational layers:
-
-### 1. Sensor Node — C++
-
-The C++ sensor operates close to the network layer and captures live packets using **libpcap**.
-
-Responsibilities include:
-
-* Capturing network packets
-* Extracting network telemetry
-* Processing traffic with minimal latency
-* Forwarding telemetry to the Python intelligence engine
-* Running with the privileges required for raw packet capture
-
-### 2. Intelligence Engine — Python
-
-The Python engine acts as the central security intelligence layer.
-
-Responsibilities include:
-
-* Receiving telemetry from the C++ sensor
-* Monitoring system logs
-* Extracting security-related features
-* Running machine learning models
-* Detecting anomalous behavior
-* Recording security events
-* Coordinating defensive responses
-* Providing data to the monitoring dashboard
+<p align="center">
+  <i>A high-performance hybrid system that combines C++ system sensing with Python-based intelligence and orchestration.</i>
+</p>
 
 ---
 
-## Architecture Flow
+## 🧭 Overview
+
+**Zero Context** is a standalone, independently architected system designed around a simple principle:
+
+> **Capture data fast. Process it intelligently. Observe it in real time.**
+
+The system combines two specialized subsystems:
+
+### 🔹 Sensor Node
+
+A high-performance **C++ daemon** responsible for low-level data sensing and collection.
+
+It is designed to:
+
+* Capture raw system or network telemetry
+* Perform low-level sensing with minimal overhead
+* Operate as a background daemon
+* Forward collected data through **Inter-Process Communication (IPC)**
+
+### 🔹 Intelligence Engine
+
+A **Python-based processing and orchestration layer** responsible for:
+
+* Receiving sensor data
+* Processing and routing telemetry
+* Running machine-learning pipelines
+* Persisting historical data
+* Managing application logging
+* Providing a real-time monitoring dashboard
+
+This separation allows the high-speed sensing layer to remain independent from computationally heavier analytical workloads.
+
+---
+
+# 🏗️ Architecture
 
 ```text
-                  ┌──────────────────────────┐
-                  │      Network Traffic     │
-                  └────────────┬─────────────┘
-                               │
-                               ▼
-                  ┌──────────────────────────┐
-                  │     C++ Sensor Node      │
-                  │       libpcap            │
-                  │                          │
-                  │  Packet Capture          │
-                  │  Traffic Extraction      │
-                  └────────────┬─────────────┘
-                               │
-                               │ IPC / Telemetry
-                               ▼
-                  ┌──────────────────────────┐
-                  │    Python Intelligence   │
-                  │         Engine           │
-                  │                          │
-                  │  Log Monitoring          │
-                  │  Feature Extraction      │
-                  │  ML Detection            │
-                  │  Threat Analysis         │
-                  └────────────┬─────────────┘
-                               │
-                 ┌─────────────┴─────────────┐
-                 ▼                           ▼
-       ┌──────────────────┐       ┌──────────────────┐
-       │      MySQL       │       │  Web Dashboard   │
-       │ Threat Storage   │       │ Real-Time View   │
-       └──────────────────┘       └──────────────────┘
+                         ┌─────────────────────────┐
+                         │       SYSTEM / NETWORK  │
+                         │        DATA SOURCES     │
+                         └────────────┬────────────┘
+                                      │
+                                      ▼
+                    ┌─────────────────────────────────┐
+                    │         C++ SENSOR NODE         │
+                    │                                 │
+                    │  sensor.cpp                     │
+                    │  sensor_daemon.cpp              │
+                    │                                 │
+                    │  • Low-level sensing             │
+                    │  • Data collection               │
+                    │  • Daemon process                │
+                    └───────────────┬─────────────────┘
+                                    │
+                                    │ IPC
+                                    ▼
+                    ┌─────────────────────────────────┐
+                    │       PYTHON INTELLIGENCE       │
+                    │             ENGINE              │
+                    │                                 │
+                    │  core.py                        │
+                    │  database.py                    │
+                    │  logger.py                      │
+                    │  train_pipeline.py              │
+                    │                                 │
+                    │  • Data processing               │
+                    │  • ML pipelines                  │
+                    │  • Persistence                   │
+                    │  • Logging                       │
+                    └───────────────┬─────────────────┘
+                                    │
+                         ┌──────────┴──────────┐
+                         │                     │
+                         ▼                     ▼
+                ┌─────────────────┐   ┌─────────────────┐
+                │    DATABASE     │   │    DASHBOARD    │
+                │                 │   │                 │
+                │ Historical Data │   │ Real-Time UI    │
+                │ Logs / Events   │   │ System Metrics  │
+                └─────────────────┘   └─────────────────┘
 ```
+
+### Design Philosophy
+
+The architecture follows **separation of concerns**:
+
+```text
+C++  →  Sense
+IPC  →  Transport
+Python → Process
+ML   →  Learn
+DB   →  Persist
+Web  →  Observe
+```
+
+This prevents analytical workloads from directly interfering with the high-speed sensing layer.
 
 ---
 
-## Repository Structure
+# 📁 Project Structure
 
 ```text
 Zero_Context/
 │
-├── main.py                     # Main entry point for the intelligence engine
-├── config.py                   # Global configuration and environment settings
-├── dashboard.py                # Web dashboard backend
+├── config.py
+│   └── Global configuration and environment variables
+│
+├── dashboard.py
+│   └── Web server and dashboard application
+│
+├── main.py
+│   └── Primary application entry point
 │
 ├── engine/
 │   ├── __init__.py
-│   ├── core.py                 # Core detection and IPC logic
-│   ├── database.py             # MySQL integration and threat persistence
-│   ├── logger.py               # Application and security event logging
-│   └── train_pipeline.py       # ML training and model evaluation pipeline
+│   │   └── Python package initialization
+│   │
+│   ├── core.py
+│   │   └── Core processing and data routing
+│   │
+│   ├── database.py
+│   │   └── Database connection and persistence layer
+│   │
+│   ├── logger.py
+│   │   └── Centralized application logging
+│   │
+│   └── train_pipeline.py
+│       └── Machine-learning training pipeline
 │
 ├── sensor/
-│   ├── sensor.cpp              # Low-level packet capture and telemetry
-│   └── sensor_daemon.cpp       # Persistent sensor daemon
+│   ├── sensor.cpp
+│   │   └── Core sensing and data collection
+│   │
+│   └── sensor_daemon.cpp
+│       └── Daemonization and IPC logic
 │
 └── templates/
-    └── index.html              # Web dashboard frontend
+    └── index.html
+        └── Dashboard interface
+```
+
+> **Note:** The structure above represents the independent architecture of the **Zero Context** repository. No legacy project architecture or unrelated modules are required.
+
+---
+
+# ✨ Core Components
+
+## 📡 `sensor/sensor.cpp`
+
+The low-level sensing component.
+
+Responsibilities include:
+
+* System/network data capture
+* Raw telemetry collection
+* Low-level data acquisition
+* Preparing data for transmission to the processing layer
+
+The component is implemented in **C++** to provide efficient low-level execution.
+
+---
+
+## ⚙️ `sensor/sensor_daemon.cpp`
+
+The daemon layer responsible for running the sensor as a background process.
+
+Responsibilities include:
+
+* Background execution
+* Sensor lifecycle management
+* IPC handling
+* Communication with the Python intelligence layer
+
+Together, `sensor.cpp` and `sensor_daemon.cpp` form the **Sensor Node**.
+
+---
+
+## 🧠 `engine/core.py`
+
+The central intelligence component.
+
+It acts as the processing layer between the sensor and the rest of the system.
+
+```text
+Sensor Data
+     │
+     ▼
+  Receive
+     │
+     ▼
+  Process
+     │
+     ├──────────────► Database
+     │
+     ├──────────────► ML Pipeline
+     │
+     └──────────────► Dashboard
 ```
 
 ---
 
-## Key Features
+## 🤖 `engine/train_pipeline.py`
 
-### 🔹 Hybrid C++ + Python Architecture
+Dedicated machine-learning training pipeline.
 
-Combines the performance of C++ packet processing with the flexibility of Python for machine learning, analytics, and orchestration.
+The module can be executed independently to:
 
-### 🔹 Machine Learning Threat Detection
+* Prepare training data
+* Train models
+* Update model artifacts
+* Support the analytical layer before deployment
 
-Uses unsupervised machine learning techniques to establish behavioral baselines and identify deviations that may represent previously unseen threats.
-
-Potential detection targets include:
-
-* Network anomalies
-* Abnormal traffic patterns
-* Port scanning
-* DDoS-like behavior
-* Unusual system activity
-
-### 🔹 Real-Time Network Monitoring
-
-The C++ sensor captures live network traffic and forwards telemetry to the intelligence engine for analysis.
-
-### 🔹 System Log Monitoring
-
-The engine can monitor security-relevant system logs and identify suspicious patterns such as:
-
-```text
-Failed password
-Invalid user
-Authentication failure
-Suspicious login activity
-```
-
-### 🔹 Persistent Threat Logging
-
-Security events and threat metadata are stored in **MySQL**, allowing historical analysis and investigation.
-
-### 🔹 Interactive Security Dashboard
-
-The web dashboard provides administrators with a centralized view of:
-
-* Network activity
-* Detected anomalies
-* Security events
-* Threat information
-* System monitoring data
-* Engine status
+Keeping training separate from the main runtime allows the intelligence engine to remain focused on processing and orchestration.
 
 ---
 
-## Technology Stack
+## 🗄️ `engine/database.py`
 
-| Component             | Technology                                         |
-| --------------------- | -------------------------------------------------- |
-| Programming Languages | C++, Python                                        |
-| Network Capture       | libpcap                                            |
-| Machine Learning      | Scikit-learn / Python ML stack                     |
-| Backend               | Python                                             |
-| Web Dashboard         | Flask                                              |
-| Database              | MySQL                                              |
-| Operating System      | Kali Linux / Debian-based Linux                    |
-| IPC                   | Inter-process communication between C++ and Python |
-| Frontend              | HTML / CSS / JavaScript                            |
+The persistence layer.
 
----
+Responsible for:
 
-## Machine Learning Pipeline
+* Database connectivity
+* Sensor data persistence
+* Historical records
+* Query operations
+* Storage required by the processing layer
 
-The ML subsystem follows a general anomaly-detection workflow:
-
-```text
-Network Telemetry
-       │
-       ▼
-Feature Extraction
-       │
-       ▼
-Data Preprocessing
-       │
-       ▼
-Model Training
-       │
-       ▼
-Behavioral Baseline
-       │
-       ▼
-Live Telemetry
-       │
-       ▼
-Anomaly Detection
-       │
-       ▼
-Threat Classification
-       │
-       ▼
-Logging / Alert / Response
-```
-
-The training pipeline can be executed independently from the primary monitoring engine.
+The actual database backend is controlled through project configuration.
 
 ---
 
-## Prerequisites
+## 📝 `engine/logger.py`
 
-The system is primarily designed for **Linux-based security environments**, particularly Kali Linux.
+Centralized logging infrastructure.
 
-### Operating System
+It provides standardized logging for:
 
-Recommended:
+* Runtime events
+* Errors
+* System activity
+* Processing events
+* Anomalies
 
-* Kali Linux
-* Debian
-* Ubuntu
-* Other Debian-based Linux distributions
+For production deployments, logs should be stored in a restricted directory with appropriate filesystem permissions.
 
-### Required Software
+---
 
-* Python 3.x
-* GCC
-* G++
-* MySQL Server
-* Git
+## 📊 `dashboard.py`
 
-### Required Libraries
+The web-facing monitoring layer.
 
-#### C++
+The dashboard provides a visual interface for observing:
 
-```text
-libpcap
-```
+* System health
+* Sensor activity
+* Collected metrics
+* Processing status
+* Pipeline state
 
-#### Python
-
-Typical dependencies include:
+The HTML interface is provided through:
 
 ```text
-scikit-learn
-pandas
-numpy
-flask
-mysql-connector-python
+templates/index.html
 ```
 
-Install Python dependencies with:
+---
+
+# 🧰 Technology Stack
+
+| Layer          | Technology                              | Purpose                            |
+| -------------- | --------------------------------------- | ---------------------------------- |
+| Sensor         | **C++**                                 | High-performance low-level sensing |
+| Sensor Capture | **libpcap / system APIs**               | Data acquisition where applicable  |
+| IPC            | **IPC mechanism configured by project** | Sensor → Engine communication      |
+| Intelligence   | **Python**                              | Processing and orchestration       |
+| ML             | **Scikit-learn / ML framework**         | Model training and analysis        |
+| Database       | **SQLite / MySQL**                      | Persistent storage                 |
+| Backend        | **Flask / configured web framework**    | Dashboard server                   |
+| Frontend       | **HTML**                                | Monitoring interface               |
+| Logging        | **Python logging**                      | Runtime and security events        |
+
+---
+
+# ⚙️ Requirements
+
+Before running the project, ensure the environment contains:
+
+### Required
+
+* **Python 3.8+**
+* **C++ compiler**
+
+  * GCC / `g++`
+  * or Clang
+* **Git**
+* Configured database backend
+* Required Python packages
+
+### Recommended Environment
+
+The project can be developed and tested in environments such as:
+
+* 🐧 Linux
+* 🐉 Kali Linux
+* 🪟 Windows with an appropriate development environment
+* Linux/Windows dual-boot setups
+
+> Low-level network/system sensing may require elevated privileges depending on the operating system and capture mechanism.
+
+---
+
+# 🚀 Installation
+
+## 1️⃣ Clone the Repository
 
 ```bash
-pip install -r requirements.txt
-```
-
----
-
-# Installation & Deployment
-
-## 1. Clone the Repository
-
-```bash
-git clone <repository-url>
+git clone https://github.com/yourusername/Zero_Context.git
 cd Zero_Context
 ```
 
 ---
 
-## 2. Create a Python Virtual Environment
+## 2️⃣ Configure Python Environment
+
+Creating a virtual environment is recommended:
 
 ```bash
-python3 -m venv venv
+python -m venv .venv
 ```
 
-Activate it:
+### Linux / macOS
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
-Upgrade pip:
+### Windows
 
-```bash
-pip install --upgrade pip
+```powershell
+.venv\Scripts\activate
 ```
 
-Install dependencies:
+Install the project's Python dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
----
-
-## 3. Configure MySQL
-
-Start the MySQL service:
-
-```bash
-sudo systemctl start mysql
-```
-
-Check the service:
-
-```bash
-sudo systemctl status mysql
-```
-
-Create the required database and tables according to the project's database schema.
-
-Database credentials should be supplied through environment variables or another secure configuration mechanism rather than being hard-coded directly into source files.
-
-Example:
-
-```bash
-export DB_HOST="localhost"
-export DB_USER="your_user"
-export DB_PASSWORD="your_password"
-export DB_NAME="zero_context"
-```
+> If the repository does not yet contain `requirements.txt`, install the dependencies defined by the project configuration.
 
 ---
 
-## 4. Compile the C++ Sensor
+## 3️⃣ Configure `config.py`
+
+Update:
+
+```text
+config.py
+```
+
+with the required environment-specific configuration.
+
+Typical configuration areas include:
+
+```text
+Database
+IPC / Socket configuration
+Model configuration
+Dashboard port
+Logging paths
+Runtime parameters
+```
+
+**Do not commit credentials, API keys, or other secrets to GitHub.**
+
+---
+
+# 🔨 Build the Sensor
 
 Navigate to the sensor directory:
 
@@ -340,269 +403,270 @@ Navigate to the sensor directory:
 cd sensor
 ```
 
-Compile the sensor:
+Compile the sensor components:
 
 ```bash
-g++ -o sensor_daemon sensor_daemon.cpp sensor.cpp -lpcap
+g++ -O3 -o sensor_daemon sensor.cpp sensor_daemon.cpp
 ```
 
-Return to the project root:
+Return to the repository root:
 
 ```bash
 cd ..
 ```
 
-Verify the generated executable:
+If the implementation depends on external libraries such as `libpcap`, install the required development package and link the corresponding library during compilation.
+
+For example:
 
 ```bash
-ls -l sensor/
+g++ -O3 -o sensor_daemon sensor.cpp sensor_daemon.cpp -lpcap
 ```
 
 ---
 
-## 5. Train the Machine Learning Models
+# 🧠 Train the Initial Model
 
-Before starting the full monitoring engine, generate the initial behavioral baseline:
+If the project requires an initial model before runtime, execute:
 
 ```bash
-python3 engine/train_pipeline.py
+python engine/train_pipeline.py
 ```
 
-The training pipeline processes collected telemetry and creates the required ML model artifacts.
+The training pipeline is intentionally separated from the runtime engine so models can be prepared or updated independently.
 
 ---
 
-## 6. Start the Sensor
+# ▶️ Running Zero Context
 
-Packet capture may require elevated privileges.
+The complete system consists of multiple cooperating processes.
 
-Run:
+## 1. Start the Sensor Node
 
-```bash
-sudo ./sensor/sensor_daemon
-```
-
-For background execution:
-
-```bash
-sudo ./sensor/sensor_daemon &
-```
-
----
-
-## 7. Start the Intelligence Engine
-
-From the project root:
-
-```bash
-python3 main.py
-```
-
----
-
-## 8. Start the Dashboard
-
-In a separate terminal:
-
-```bash
-python3 dashboard.py
-```
-
-The dashboard can then be accessed through the configured local web address and port.
-
----
-
-# Recommended Startup Sequence
-
-For a clean deployment, start the components in the following order:
-
-```text
-1. MySQL
-      ↓
-2. C++ Sensor
-      ↓
-3. Python Intelligence Engine
-      ↓
-4. Web Dashboard
-```
-
-Example:
-
-```bash
-sudo systemctl start mysql
-
-sudo ./sensor/sensor_daemon &
-
-python3 main.py
-
-python3 dashboard.py
-```
-
----
-
-# Security Considerations
-
-Because the project performs low-level packet capture and interacts with security-sensitive system resources:
-
-* Run the C++ sensor with the minimum privileges required.
-* Do not commit database passwords to Git.
-* Use environment variables or secure secret management for credentials.
-* Restrict access to the monitoring dashboard.
-* Protect MySQL credentials.
-* Avoid running the entire application as `root` when unnecessary.
-* Review generated logs regularly.
-* Test defensive mechanisms only on systems and networks you are authorized to monitor.
-
----
-
-# Troubleshooting
-
-## libpcap Header Not Found
-
-If compilation reports an error similar to:
-
-```text
-fatal error: pcap.h: No such file or directory
-```
-
-Install the development package:
-
-```bash
-sudo apt update
-sudo apt install libpcap-dev
-```
-
-Then compile again:
-
-```bash
-g++ -o sensor_daemon sensor_daemon.cpp sensor.cpp -lpcap
-```
-
----
-
-## Permission Denied During Packet Capture
-
-Packet capture may require additional privileges.
-
-Try:
+From the repository root:
 
 ```bash
 sudo ./sensor/sensor_daemon
 ```
 
-For production deployments, prefer granting only the specific capabilities required by the sensor instead of running the entire application with unrestricted root privileges.
+Elevated privileges may be required depending on what the sensor captures.
 
 ---
 
-## MySQL Connection Problems
+## 2. Start the Intelligence Engine
 
-Verify that MySQL is running:
-
-```bash
-sudo systemctl status mysql
-```
-
-Test connectivity:
+Open another terminal:
 
 ```bash
-mysql -u your_user -p
+python main.py
 ```
 
-Then verify the database configuration used by the application.
+The main application initializes the Python processing layer and orchestrates the intelligence pipeline.
 
 ---
 
-# Development Workflow
+## 3. Start the Dashboard
 
-A typical development workflow is:
+Open another terminal:
+
+```bash
+python dashboard.py
+```
+
+The dashboard will listen on the port configured in:
 
 ```text
-Modify Source
-     │
-     ▼
-Compile C++ Sensor
-     │
-     ▼
-Collect Telemetry
-     │
-     ▼
-Train / Update ML Models
-     │
-     ▼
-Run Detection Engine
-     │
-     ▼
-Validate Alerts
-     │
-     ▼
-Inspect Dashboard
-     │
-     ▼
-Review MySQL Logs
+config.py
+```
+
+Then open:
+
+```text
+http://localhost:<PORT>
+```
+
+in your browser.
+
+---
+
+# 🔄 Runtime Data Flow
+
+The complete runtime pipeline can be summarized as:
+
+```text
+┌──────────────┐
+│ Data Source  │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────┐
+│ C++ Sensor   │
+│    Node      │
+└──────┬───────┘
+       │
+       │ IPC
+       ▼
+┌──────────────┐
+│ Python Core  │
+│   Engine     │
+└──────┬───────┘
+       │
+       ├───────────────┐
+       ▼               ▼
+┌──────────────┐  ┌──────────────┐
+│ ML Pipeline  │  │   Database   │
+└──────┬───────┘  └──────┬───────┘
+       │                  │
+       └────────┬─────────┘
+                ▼
+        ┌──────────────┐
+        │  Dashboard   │
+        └──────────────┘
 ```
 
 ---
 
-# Future Enhancements
+# 🔐 Security & Logging
 
-Potential future versions of **Cyber Defensive Engine** can include:
+Security and operational visibility are fundamental to the system.
 
-* Advanced deep-learning-based anomaly detection
-* Automated threat response
-* Firewall integration
-* IP reputation analysis
-* Threat intelligence feeds
-* GeoIP-based visualization
-* Attack timeline reconstruction
-* Distributed sensor deployment
-* Containerized deployment
-* REST API integration
-* Role-based dashboard authentication
-* Alert notification integrations
-* Model drift detection
-* Continuous/incremental model learning
-* SIEM integration
-* Enterprise-scale telemetry processing
+The logging layer is centralized through:
 
----
+```text
+engine/logger.py
+```
 
-# Project Goals
+It is recommended to:
 
-The primary goals of **Zero_Context** are to provide:
+* Restrict access to log directories
+* Avoid storing secrets in logs
+* Rotate large log files
+* Separate operational and security events where appropriate
+* Apply least-privilege permissions
+* Protect database credentials
+* Keep sensitive configuration outside version control
 
-1. Real-time network visibility
-2. Intelligent anomaly detection
-3. Low-level packet inspection
-4. Persistent security event storage
-5. Machine-learning-assisted threat detection
-6. Centralized security visualization
-7. A modular foundation for future defensive security capabilities
+### Environment Secrets
 
----
+Never commit sensitive values such as:
 
-# Disclaimer
+```text
+Passwords
+API Keys
+Database Credentials
+Private Tokens
+Encryption Keys
+```
 
-**Zero_Context is intended for authorized defensive security, research, educational, and testing purposes only.**
-
-Do not deploy packet capture, monitoring, automated blocking, or other defensive mechanisms against systems or networks without appropriate authorization.
+Use environment variables or a secure secrets-management mechanism instead.
 
 ---
 
-# Author
+# 🧩 Design Principles
 
-**Abhinandan**
+Zero Context is built around several engineering principles.
 
-**B.Tech Computer Science and Engineering**
-**Gurukul Kangri Vishwavidyalaya**
+### ⚡ Performance
+
+Low-level data sensing is delegated to compiled C++ code.
+
+### 🧱 Separation of Concerns
+
+Sensing, processing, persistence, learning, and visualization remain independently organized.
+
+### 🔌 Modular Architecture
+
+Each subsystem has a clearly defined responsibility and can evolve independently.
+
+### 🧠 Intelligence
+
+Machine-learning pipelines can be developed and executed independently of the sensor layer.
+
+### 📊 Observability
+
+Persistent data and centralized logging provide visibility into system behavior.
+
+### 🔄 Extensibility
+
+The architecture is designed to allow additional sensors, processing modules, models, and dashboard components to be introduced without redesigning the entire system.
 
 ---
 
-# License
+# 🗺️ Future Roadmap
 
-Add the project's applicable license here, for example:
+Potential future improvements include:
+
+* [ ] Additional sensor modules
+* [ ] More efficient IPC mechanisms
+* [ ] Distributed sensor nodes
+* [ ] Advanced anomaly-detection models
+* [ ] Real-time alerting
+* [ ] Authentication and authorization for the dashboard
+* [ ] Containerized deployment
+* [ ] Automated model retraining
+* [ ] Metrics and observability integration
+* [ ] Horizontal scaling of processing nodes
+* [ ] Centralized multi-device management
+
+---
+
+# 🤝 Contributing
+
+Contributions, suggestions, and technical discussions are welcome.
+
+A typical contribution workflow:
+
+```bash
+git checkout -b feature/your-feature
+```
+
+Make your changes, test them, and commit:
+
+```bash
+git add .
+git commit -m "feat: add your feature"
+```
+
+Then push your branch:
+
+```bash
+git push origin feature/your-feature
+```
+
+Open a Pull Request and describe:
+
+* What changed
+* Why it was changed
+* How it was tested
+* Any architectural considerations
+
+---
+
+# 📜 License
+
+Add the project's chosen license here.
+
+For example:
 
 ```text
 MIT License
 ```
 
-or replace this section with the license selected for the repository.
+---
+
+# 👨‍💻 Author
+
+**Abhinandan**
+
+Computer Science & Engineering Student
+Cybersecurity • System Engineering • Machine Learning
+
+---
+
+<p align="center">
+
+### ⚡ Sense. Process. Learn. Observe.
+
+<i>Zero Context — engineered for high-performance data sensing and intelligent processing.</i>
+
+</p>
