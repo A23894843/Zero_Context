@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-sensor:
+    name: Compile C++ sensor daemon
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile sensor_daemon.cpp
+        run: g++ -pthread -O3 -Wall -o /tmp/sensor_daemon sensor/sensor_daemon.cpp
+
+  python-checks:
+    name: Python syntax & import checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Byte-compile engine + entrypoints
+        run: |
+          python -m py_compile config.py main.py dashboard.py
+          python -m py_compile engine/*.py
+      - name: Import sanity check
+        run: |
+          python -c "import config"
+          python -c "from engine import core, database, logger, train_pipeline, log_setup"

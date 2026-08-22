@@ -1,0 +1,10 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+temporary/
+models/*.pth
+models/*.pkl
+sensor/sensor_daemon
+*.log
+.DS_Store

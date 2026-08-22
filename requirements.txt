@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+aiomysql
+python-dotenv
+torch
+scikit-learn
+joblib
+numpy
+cryptography
