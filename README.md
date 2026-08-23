@@ -15,6 +15,12 @@
   <i>A high-performance hybrid system that combines C++ system sensing with Python-based intelligence and orchestration.</i>
 </p>
 
+<p align="center">
+  <a href="docs/Zero_Context_Project_Report.pdf"><b>📄 Full Report</b></a> •
+  <a href="docs/Zero_Context_Project_Synopsis.pdf"><b>📄 Synopsis</b></a> •
+  <a href="#-documentation"><b>📚 Docs</b></a>
+</p>
+
 ---
 
 ## 🧭 Overview
@@ -48,6 +54,39 @@ A **Python-based processing and orchestration layer** responsible for:
 * Providing a real-time monitoring dashboard
 
 This separation allows the high-speed sensing layer to remain independent from computationally heavier analytical workloads.
+
+---
+
+## 📚 Documentation
+
+Full write-ups, diagrams, and reference material live in [`/docs`](docs/):
+
+| Document | Description |
+|---|---|
+| [📄 Project Report](docs/Zero_Context_Project_Report.pdf) | Full academic report — background, architecture, implementation, testing, and extreme-load benchmarks |
+| [📄 Project Synopsis](docs/Zero_Context_Project_Synopsis.pdf) | Condensed synopsis — problem statement, objectives, methodology, and expected outcomes |
+| [🎨 Cover Page](docs/Zero_Context_Cover_Page.pdf) | Themed title page used across the report and synopsis |
+
+**Architecture & design diagrams** ([`/docs/diagrams`](docs/diagrams/)):
+
+<p align="center">
+  <img src="docs/diagrams/architecture.png" alt="System Architecture" width="85%"/>
+</p>
+
+<details>
+<summary><b>More diagrams — data flow, database schema, deployment</b></summary>
+<br>
+
+**End-to-end data flow**
+![Data Flow](docs/diagrams/dataflow.png)
+
+**Database schema**
+![Database Schema](docs/diagrams/database_schema.png)
+
+**Containerized deployment (Docker Compose)**
+![Deployment](docs/diagrams/deployment.png)
+
+</details>
 
 ---
 
@@ -120,6 +159,16 @@ This prevents analytical workloads from directly interfering with the high-speed
 
 ```text
 Zero_Context/
+│
+├── docs/
+│   ├── Zero_Context_Project_Report.pdf
+│   ├── Zero_Context_Project_Synopsis.pdf
+│   ├── Zero_Context_Cover_Page.pdf
+│   └── diagrams/
+│       ├── architecture.png
+│       ├── dataflow.png
+│       ├── database_schema.png
+│       └── deployment.png
 │
 ├── config.py
 │   └── Global configuration and environment variables
@@ -288,7 +337,7 @@ templates/index.html
 # 🧰 Technology Stack
 
 | Layer          | Technology                              | Purpose                            |
-| -------------- | --------------------------------------- | ---------------------------------- |
+| -------------- | ---------------------------------------- | ----------------------------------- |
 | Sensor         | **C++**                                 | High-performance low-level sensing |
 | Sensor Capture | **libpcap / system APIs**               | Data acquisition where applicable  |
 | IPC            | **IPC mechanism configured by project** | Sensor → Engine communication      |
@@ -531,6 +580,8 @@ The complete runtime pipeline can be summarized as:
         │  Dashboard   │
         └──────────────┘
 ```
+
+A step-by-step breakdown of this pipeline, including the ML scoring and mitigation decision logic, is diagrammed in [`docs/diagrams/dataflow.png`](docs/diagrams/dataflow.png) and covered in Chapter 5 of the [Project Report](docs/Zero_Context_Project_Report.pdf).
 
 ---
 
