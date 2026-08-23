@@ -59,7 +59,7 @@ This separation allows the high-speed sensing layer to remain independent from c
 
 ## 📚 Documentation
 
-Full write-ups, diagrams, and reference material live in [`/docs`](docs/):
+Full write-ups, diagram, and reference material live in [`/docs`](docs/):
 
 | Document | Description |
 |---|---|
@@ -67,24 +67,24 @@ Full write-ups, diagrams, and reference material live in [`/docs`](docs/):
 | [📄 Project Synopsis](docs/Zero_Context_Project_Synopsis.pdf) | Condensed synopsis — problem statement, objectives, methodology, and expected outcomes |
 | [🎨 Cover Page](docs/Zero_Context_Cover_Page.png) | Themed title page used across the report and synopsis |
 
-**Architecture & design diagrams** ([`/docs/diagram`](docs/diagram/)):
+**Architecture & design diagram** ([`/docs/diagram`](docs/diagram/)):
 
 <p align="center">
-  <img src="docs/diagrams/architecture.png" alt="System Architecture" width="85%"/>
+  <img src="docs/diagram/diagram_1_architecture.png" alt="System Architecture" width="85%"/>
 </p>
 
 <details>
-<summary><b>More diagrams — data flow, database schema, deployment</b></summary>
+<summary><b>More diagram — data flow, database schema, deployment</b></summary>
 <br>
 
 **End-to-end data flow**
-![Data Flow](docs/diagrams/dataflow.png)
+![Data Flow](docs/diagram/dataflow.png)
 
 **Database schema**
-![Database Schema](docs/diagrams/database_schema.png)
+![Database Schema](docs/diagram/database_schema.png)
 
 **Containerized deployment (Docker Compose)**
-![Deployment](docs/diagrams/deployment.png)
+![Deployment](docs/diagram/deployment.png)
 
 </details>
 
@@ -164,7 +164,7 @@ Zero_Context/
 │   ├── Zero_Context_Project_Report.pdf
 │   ├── Zero_Context_Project_Synopsis.pdf
 │   ├── Zero_Context_Cover_Page.pdf
-│   └── diagrams/
+│   └── diagram/
 │       ├── architecture.png
 │       ├── dataflow.png
 │       ├── database_schema.png
@@ -581,7 +581,7 @@ The complete runtime pipeline can be summarized as:
         └──────────────┘
 ```
 
-A step-by-step breakdown of this pipeline, including the ML scoring and mitigation decision logic, is diagrammed in [`docs/diagrams/dataflow.png`](docs/diagrams/dataflow.png) and covered in Chapter 5 of the [Project Report](docs/Zero_Context_Project_Report.pdf).
+A step-by-step breakdown of this pipeline, including the ML scoring and mitigation decision logic, is diagrammed in [`docs/diagram/dataflow.png`](docs/diagram/dataflow.png) and covered in Chapter 5 of the [Project Report](docs/Zero_Context_Project_Report.pdf).
 
 ---
 
