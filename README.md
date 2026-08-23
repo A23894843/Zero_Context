@@ -65,7 +65,7 @@ Full write-ups, diagrams, and reference material live in [`/docs`](docs/):
 |---|---|
 | [📄 Project Report](docs/Zero_Context_Project_Report.pdf) | Full academic report — background, architecture, implementation, testing, and extreme-load benchmarks |
 | [📄 Project Synopsis](docs/Zero_Context_Project_Synopsis.pdf) | Condensed synopsis — problem statement, objectives, methodology, and expected outcomes |
-| [🎨 Cover Page](docs/Zero_Context_Cover_Page.pdf) | Themed title page used across the report and synopsis |
+| [🎨 Cover Page](docs/Zero_Context_Cover_Page.png) | Themed title page used across the report and synopsis |
 
 **Architecture & design diagrams** ([`/docs/diagrams`](docs/diagrams/)):
 
