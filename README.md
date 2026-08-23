@@ -70,7 +70,7 @@ Full write-ups, diagram, and reference material live in [`/docs`](docs/):
 **Architecture & design diagram** ([`/docs/diagram`](docs/diagram/)):
 
 <p align="center">
-  <img src="docs/diagram/diagram_1_architecture.png" alt="System Architecture" width="85%"/>
+  <img src="docs/diagram/architecture.png" alt="System Architecture" width="85%"/>
 </p>
 
 <details>
