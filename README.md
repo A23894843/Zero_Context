@@ -67,7 +67,7 @@ Full write-ups, diagrams, and reference material live in [`/docs`](docs/):
 | [📄 Project Synopsis](docs/Zero_Context_Project_Synopsis.pdf) | Condensed synopsis — problem statement, objectives, methodology, and expected outcomes |
 | [🎨 Cover Page](docs/Zero_Context_Cover_Page.png) | Themed title page used across the report and synopsis |
 
-**Architecture & design diagrams** ([`/docs/diagrams`](docs/diagrams/)):
+**Architecture & design diagrams** ([`/docs/diagram`](docs/diagram/)):
 
 <p align="center">
   <img src="docs/diagrams/architecture.png" alt="System Architecture" width="85%"/>
